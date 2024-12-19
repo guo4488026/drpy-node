@@ -42,6 +42,10 @@ async function generateSiteJSON(jsDir, requestHost, sub) {
         };
         sites.push(site);
     }
+
+    // 自定义排序
+    sortParseJSON(sites, sub);
+
     return {sites};
 }
 
@@ -99,6 +103,27 @@ function getSubs(subFilePath) {
     return subs
 }
 
+function sortParseJSON(sites, sub) {
+    let sorts = sub.sorts||'';
+    if (sorts) {
+        let sortKeys = sorts.split(',');
+        let sortMap = {};
+        sortKeys.forEach((key, index) => {
+            sortMap[key.trim()] = index;
+        });
+
+        sites.sort((a, b) => {
+            let aKey = a.key.split('_')[1].trim();
+            let bKey = b.key.split('_')[1].trim();
+
+            let aIndex = sortMap[aKey] !== undefined ? sortMap[aKey] : sortKeys.length + aKey.localeCompare(bKey);
+            let bIndex = sortMap[bKey] !== undefined ? sortMap[bKey] : sortKeys.length + bKey.localeCompare(aKey); // 为了确保稳定性，这里也使用 aKey 进行比较
+
+            return aIndex - bIndex;
+        });
+    }
+}
+
 export default (fastify, options, done) => {
 
     fastify.get('/index', async (request, reply) => {
@@ -115,7 +140,7 @@ export default (fastify, options, done) => {
     fastify.get('/config*', async (request, reply) => {
         let t1 = (new Date()).getTime();
         const query = request.query; // 获取 query 参数
-        const sub_code = query.sub || '';
+        const sub_code = query.sub || 'green';
         const cfg_path = request.params['*']; // 捕获整个路径
         try {
             // 获取主机名，协议及端口
