@@ -45,6 +45,7 @@
     "node-sqlite3-wasm": "^0.8.35",
     "p-queue": "^8.0.1",
     "pinyin": "2.10.2",
+    "pm2": "^6.0.5",
     "qs": "^6.13.1",
     "queue": "^7.0.0",
     "rotating-file-stream": "^3.2.5",
