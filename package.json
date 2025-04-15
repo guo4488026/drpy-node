@@ -27,6 +27,7 @@
   "dependencies": {
     "@fastify/formbody": "^7.4.0",
     "@fastify/static": "7.0.4",
+    "@vercel/node": "^5.1.14",
     "axios": "^1.7.9",
     "cheerio": "^1.0.0",
     "crypto-js": "^4.2.0",
