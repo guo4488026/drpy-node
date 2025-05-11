@@ -23,10 +23,9 @@ detailUrl: "/detail/fyid.html",
 		'User-Agent': 'MOBILE_UA',
 	},
 	class_parse:'.container&&.tag.text-light;a&&Text;a&&href;.*/(.*?).html',
-	play_parse:false,
+	play_parse: true,
 	
-    sniffer:1,
-  	isVideo:`js:if(!/url=|m3u8.js|template|referer=|mp4hls|mp4.js/.test(input)){input = true}else{input = false}`,    
+    lazy: "js:\n  let html = request(input);\n  let hconf = html.match(/r player_.*?=(.*?)</)[1];\n  let json = JSON5.parse(hconf);\n  let url = json.url;\n  if (json.encrypt == '1') {\n    url = unescape(url);\n  } else if (json.encrypt == '2') {\n    url = unescape(base64Decode(url));\n  }\n  if (/\\.(m3u8|mp4|m4a|mp3)/.test(url)) {\n    input = {\n      parse: 0,\n      jx: 0,\n      url: url.replace('&t=hls',''),\n    };\n  } else {\n    input;\n  }",
 
 	limit: 6,
 	推荐:'.owl-theme-jable .item;*;*;*;*',
