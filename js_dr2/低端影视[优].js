@@ -14,7 +14,7 @@ var rule = {
     class_name: '动漫&电影&剧集&综艺&记录',
     class_url: "category/anime/&category/movie/&category/airing/&category/variety/&category/documentary/",
     play_parse: true,
-    lazy: `js:
+    lazy: `
     
     if (/(pan.quark.cn|www.aliyundrive.com|www.alipan.com)/.test(input)){
  input= getProxyUrl().replace('js',"quark")+'&type=push&url='+encodeURIComponent(input);
@@ -25,12 +25,8 @@ var rule = {
     
     var url=JSON.parse(fetch(jxurl,{headers:{"Referer": input.split("¥")[1]}})).url
     
-                   
-                    
-                    
-
             
-           input={
+        input = {
                url: url,
                parse: 0,
                jx:0
@@ -39,7 +35,7 @@ var rule = {
      
          
      }else if(/mp4/.test(input)){
-         input={
+        input = {
              url: input,
              parse:0,
              jx:0,
@@ -57,7 +53,7 @@ var page= M[1];
 if(page==1){
 var html=fetch(M[0])
 }else{
-html=fetch(M[0]+"/page/"+page+"/")
+html=fetch(M[0]+"page/"+page+"/")
 }
 var list= pdfa(html,"body&&article");
 var d=[];

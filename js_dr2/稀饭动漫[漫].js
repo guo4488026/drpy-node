@@ -1,6 +1,7 @@
+
 var rule = {
   title: '稀饭动漫',
-  host: 'https://dick.xfani.com',
+  host: 'https://dm1.xfdm.pro',
 
   url: '/index.php/api/vod$$$type=fyclass&fyfilter',
   searchUrl: '/search.html?wd=**',
@@ -68,7 +69,7 @@ var rule = {
                 title: item.vod_name,
                 desc: item.vod_remarks,
                 img: item.vod_pic,
-                url: "https://dick.xfani.com/bangumi/"+item.vod_id + ".html"
+                url: rule.host + "/bangumi/"+item.vod_id + ".html"
                
             })
         })

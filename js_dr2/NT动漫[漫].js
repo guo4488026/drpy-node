@@ -20,7 +20,61 @@ var rule = {
     cate_exclude: '',
     play_parse: true,
     lazy: $js.toString(() => {
-        input = {parse: 1, url: input, js: ''};
+        var html = JSON.parse(request(input).match(/r player_.*?=(.*?)</)[1]).url
+   function maoss(jxurl, ref, key) {
+        function AES(text, key, iv, isEncrypt) {
+        eval(getCryptoJS());
+        var key = CryptoJS.enc.Utf8.parse(key);
+        var iv = CryptoJS.enc.Utf8.parse(iv);
+        if (isEncrypt) {
+            return CryptoJS.AES.encrypt(text, key, {
+                iv: iv,
+                mode: CryptoJS.mode.CBC,
+                padding: CryptoJS.pad.Pkcs7
+            }).toString();
+        };
+        return CryptoJS.AES.decrypt(text, key, {
+            iv: iv,
+            padding: CryptoJS.pad.Pkcs7
+        }).toString(CryptoJS.enc.Utf8);
+    }
+        try {
+            var getVideoInfo = function(text) {
+                return AES(text, key, iv);
+            };
+            key = key == undefined ? 'dvyYRQlnPRCMdQSe' : key;
+            if (ref) {
+                var html = request(jxurl, {
+                    headers: {
+                        'Referer': ref
+                    }
+                });
+            } else {
+                var html = request(jxurl);
+            }
+            if (html.indexOf('&btwaf=') != -1) {
+                html = request(jxurl + '&btwaf' + html.match(/&btwaf(.*?)"/)[1], {
+                    headers: {
+                        'Referer': ref
+                    }
+                })
+            }
+            var iv = html.match(/[_token|_iv] = "(.*?)"/)[1];
+            eval(html.match(/var config = {[\s\S]*?}/)[0] + '');
+            if (config.url.slice(0, 4) != 'http') {
+                config.url = decodeURIComponent(tools.AES(config.url, key, iv));
+            }
+            return config.url;
+        } catch (e) {
+            return '';
+        }
+    }
+    var url = maoss("https://danmu.yhdmjx.com/m3u8.php?url=" + html, input, "57A891D97E332A9D")
+
+       input = {
+          parse: 0,
+          url: url
+        }
     }),
     double: true,
     推荐: '.blockcontent;ul.ul_li_a5&&li;.anime_icon1_name&&Text;*;.anime_icon1_name1&&Text;*',
