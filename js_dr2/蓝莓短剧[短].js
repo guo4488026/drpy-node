@@ -705,7 +705,7 @@ var rule = {
             d.push({
                 title: data.title,
                 desc: data.author,
-                img: data.cover + `@Referer=`,
+                img: data.cover,
                 url: M[0] + "?bookid=" + data.book_id
             });
         });
@@ -749,7 +749,7 @@ var rule = {
             d.push({
                 title: data.title,
                 desc: data.author,
-                img: data.cover + `@Referer=`,
+                img: data.cover,
                 url: M[0] + "?bookid=" + data.book_id
             });
         });
