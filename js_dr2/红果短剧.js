@@ -685,7 +685,7 @@ var rule = {
         input = {
             parse: "0",
             jx: "0",
-            url: input 
+            url: input
         }
 
 
