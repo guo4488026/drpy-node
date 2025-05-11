@@ -716,7 +716,7 @@ var rule = {
         var d = [];
         var html = request(input);
         var base = input.split('?')[0];
-        eval(html.match(/const\s+episodes\s*=\s*\[.*?\];/)[0])
+        var episodes = JSON.parse(html.split("episodes = ")[1].split(";")[0])
         var list = pdfa(html, ".episode-grid&&li");
         var x = [];
         for (var i in list) {
