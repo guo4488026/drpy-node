@@ -50,7 +50,7 @@ var rule = {
         "desc": ".module-info-item:eq(4)&&Text;.module-info-item:eq(2)&&Text;.module-info-item:eq(1)&&Text;li.col-xs-12--span:eq(0)&&Text;;",
         "content": ".show-desc&&Text",
         "tabs": "body&&.module-tab-item",
-        "lists": "#panel1&&a",
+        "lists": ".sort-list:(#id)&&a",
         tab_text: "body&&Text",
         list_text: "body&&Text",
         list_url: "a&&href"
