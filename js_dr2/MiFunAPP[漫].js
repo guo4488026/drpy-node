@@ -526,40 +526,49 @@ var rule = {
     },
     timeout: 5000,
     play_parse: true,
-    lazy:  $js.toString(() => {
-         var result = {}
-         result.parse = 0;
-         result.jx = 0;
-    if (/mp4|m3u8/.test(input)) {
-    result.url = input
-    input = result
-} else {
-    var html = request(rule.host + "/api.php/getappapi.index/vodParse", {
-        headers: {},
-        body: `parse_api=a970d5e4ea95be4acd0e0ffdf6e8660c&url=${Encrypt(input)}&token=`,
-        method: "POST"
-    });
-    if (JSON.parse(html).code == "1") {
-        try {
-            var html = Decrypt(JSON.parse(html).data);
-            var html2 = JSON.parse(html).json;
-            var html3 = JSON.parse(html2);
-            if (html3.code != "404") {
-                
-                var url = html3.url
+    lazy: $js.toString(() => {
+        var result = {}
 
-                result.url = url
-                input = result
+        result.parse = 0;
+
+        result.jx = 0;
+        if (/mp4|m3u8/.test(input)) {
+            var url = input
+        } else if (input.includes(rule.host)) {
+            var html = request(input.split("?")[0], {
+                body: input.split("?")[1],
+                method: "POST"
+            });
+            if (JSON.parse(html).code == "1") {
+                try {
+                    var html = Decrypt(JSON.parse(html).data);
+                    var html2 = JSON.parse(html).json;
+                    var html3 = JSON.parse(html2);
+                    if (html3.code != "404") {
+
+                        var url = html3.url
+
+                    }
+                } catch (e) {
+                    log(e.message);
+                }
             }
-        } catch (e) {
-            log(e.message);
-        }
-    }
 
-}
+        } else {
+            var jxdata = request(input);
+            var url = JSON.parse(jxdata).url;
+        }
+        result.url = url
+
+        input = result
+
     }),
     推荐: $js.toString(() => {
-        var html = request(input);
+        var M = input.split("?")
+        var html = request(M[0], {
+            body: M[1],
+            method: "POST"
+        });
         var html1 = Decrypt(JSON.parse(html).data);
         var d = []
         var list = JSON.parse(html1).recommend_list;
@@ -576,7 +585,11 @@ var rule = {
         setResult(d)
     }),
     一级: $js.toString(() => {
-        var html = request(input);
+        var M = input.split("?")
+        var html = request(M[0], {
+            body: M[1],
+            method: "POST"
+        });
         var html1 = Decrypt(JSON.parse(html).data);
         var d = []
         var list = JSON.parse(html1).recommend_list;
@@ -595,37 +608,51 @@ var rule = {
     }),
     二级: $js.toString(() => {
         VOD = {};
-        
 
-        let html = request(input);
+
+        var M = input.split("?")
+        var html = request(M[0], {
+            body: M[1],
+            method: "POST"
+        });
         var html1 = Decrypt(JSON.parse(html).data);
         var data = JSON.parse(html1);
         var items = data.vod;
         VOD = data.vod;
         var arts = data.vod_play_list;
         var tabs = [];
-         var parses = [];
-         var lists = [];
-         arts.forEach(item => {
-          tabs.push(item.player_info.show);
-          parses.push(item.player_info.parse);
-           lists.push(item.urls);
-});
+        var parses = [];
+        var lists = [];
+        arts.forEach(item => {
+            tabs.push(item.player_info.show);
+            parses.push(item.player_info.parse);
+            lists.push(item.urls);
+        });
 
-        
+
         var result = [];
         try {
             for (var i in lists) {
                 var playlist = [];
                 var list = lists[i]
+
                 for (let item of list) {
                     let title = item.name;
                     let url = item.url;
-                    playlist.push(title + '$' + url);
+                    let parse = parses[i]
+                
+                   if(/m3u8|mp4/.test(url)){
+                                             playlist.push(title + '$' + url)
+                    }else if(/http/.test(parse)) {
+                        playlist.push(title + '$' + parse + url)
+                    } else {
+
+                        playlist.push(title + '$' + rule.host + `/api.php/getappapi.index/vodParse?parse_api=${parse}&url=${Encrypt(url)}&token=${item.token}`);
+                    }
                 }
                 let vod_play_url = playlist.join("#")
                 result.push(vod_play_url)
-                
+
             }
 
             VOD.vod_play_url = result.join("$$$");
@@ -636,7 +663,12 @@ var rule = {
 
     }),
     搜索: $js.toString(() => {
-        var html = request(input);
+
+        var M = input.split("?")
+        var html = request(M[0], {
+            body: M[1],
+            method: "POST"
+        });
         var html1 = Decrypt(JSON.parse(html).data);
         var d = []
         var list = JSON.parse(html1).search_list;
