@@ -1,6 +1,6 @@
 var rule = {
     title: '打驴动漫[漫]',
-    host: 'https://www.dqsj.top',
+    host: 'https://www.dalvdm.cc',
     class_name: '热门新番&动漫大全&日本动漫&国产动漫&欧美动漫&动漫电影&剧集&电影&综艺',
     class_url: '23&20&21&22&25&24&27&28&31',
     searchUrl: '/index.php/ajax/suggest?mid=1&wd=**&limit=50',
@@ -10,7 +10,7 @@ var rule = {
     headers: {
         'User-Agent': 'MOBILE_UA',
     },
-    url: '/index.php/api/vod#type=fyclassfyfilter&page=fypage',
+    url: '/index.php/ds_api/vod#type=fyclassfyfilter&page=fypage',
     filterable: 0,
     filter_url: '&class={{fl.class}}&year={{fl.year}}&letter={{fl.letter}}&by={{fl.by}}',
     filter: {
