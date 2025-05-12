@@ -25,85 +25,48 @@ var rule = {
     play_parse: true,
     //sniffer: 1,
     //is_video: 'obj/tos|bd.xhscdn|/ugc/',
-    lazy: $js.toString(()=>{
-    eval(getCryptoJS())
-           var html = request(input)
-        
-       var player = JSON.parse(html.match(/r player_.*?=(.*?)</)[1])
-        var url = player.url
-        if (player.encrypt == '1') {
-            url = unescape(url);
-        } else if (player.encrypt == '2') {
+    lazy: $js.toString(() => {
+        var html = JSON.parse(request(input).match(/r player_.*?=(.*?)</)[1]);
+    var url = html.url;
+    if (html.encrypt == "1") {
+        url = unescape(url);
+    } else {
+        if (html.encrypt == "2") {
             url = unescape(base64Decode(url));
         }
+    }
+    if (/mp4|m3u8/.test(url)) {
+        var video = url;
+    } else {
+        eval(request(rule.host + "/static/js/playerconfig.js"));
+        var jx = MacPlayerConfig.player_list[html.from].parse;
+        if (jx == "") {
+            jx = MacPlayerConfig.parse;
+        }
+        eval(request(jx + url, {}).match(/var config = {[\s\S]*?}/)[0]);
+        eval(getCryptoJS());
+        var aes_key = "ARTPLAYERliUlanG";
+        var aes_iv = "ArtplayerliUlanG";
+        function decrypt(text) {
+            let decrypted = CryptoJS.AES.decrypt(text, CryptoJS.enc.Utf8.parse(aes_key), {iv: CryptoJS.enc.Utf8.parse(aes_iv), mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7});
+            return decrypted.toString(CryptoJS.enc.Utf8);
+        }
+        var htm = request(jx.replace("?url=", "api.php"), {headers: {"Referer": input}, body: "url="+config.url+"&time=" + config.time+"&key="+config.key,method:"POST"})
         
-     
- 
-eval(request('https://www.dqsj.top/static/js/playerconfig.js'));
-    var jx = MacPlayerConfig.player_list[player.from].parse;
-   
-    eval(request(jx + url).match(/var config = {[\s\S]*?}/)[0])
-function calculate(input) {
-    const hash = CryptoJS.MD5(input);
-    return hash.toString();
-}
-function aesplay(key, plaintext) {
-    var s = new Array(256);
-    var j = 0;
-    for (var i = 0; i < 256; i++) {
-        s[i] = i;
-    }
-    for (i = 0; i < 256; i++) {
-        j = (j + s[i] + key.charCodeAt(i % key.length)) % 256;
-        var temp = s[i];
-        s[i] = s[j];
-        s[j] = temp;
-    }
-    var i = 0;
-    var j = 0;
-    var result = "";
-    for (var k = 0; k < plaintext.length; k++) {
-        i = (i + 1) % 256;
-        j = (j + s[i]) % 256;
-        temp = s[i];
-        s[i] = s[j];
-        s[j] = temp;
-        var t = (s[i] + s[j]) % 256;
-        var ch = plaintext.charCodeAt(k) ^ s[t];
-        result += String.fromCharCode(ch);
-    }
-    return result;
-}
-function enplay(text) {
-    var key = config.vkey;
-    var encrypted = aesplay(key, text);
-    return window0.btoa(encrypted);
-};
-log(enplay(calculate(config.time + 'stray')))
-var body = "url="+config.url+"&time="+enplay(calculate(config.time + 'stray'))+"&key="+enplay(calculate(config.url + 'stray'))+"&vkey="+enplay(calculate(config.vkey + 'stray'))+"&ckey="+enplay(calculate('bfq.myhkw.com' + 'stray'));
+        var play = JSON.parse(htm).url;
+        var video = decrypt(play) 
+       }
+
+        input = {
+            parse: 0,
+            jx: 0,
+            url: video,
             
+        }
 
-  var url = JSON.parse(post('https://bfq.myhkw.com/api.php',{headers: {
-                'Referer': input
-            }, body: body}))
-   
-    
-function decrypt(text) {
-    let decrypted = CryptoJS.AES.decrypt(text, CryptoJS.enc.Utf8.parse(url.aes_key), {
-        iv: CryptoJS.enc.Utf8.parse(url.aes_iv),
-        mode: CryptoJS.mode.CBC,
-        padding: CryptoJS.pad.Pkcs7
-    });
-    return decrypted.toString(CryptoJS.enc.Utf8)
-}
 
-              var video=decrypt(url.url);
-          input={
-              url: video,
-              parse:0,
-              jx:0
-          }
-}),
+
+    }),
     limit: 6,
     推荐: '.list-vod.flex .public-list-box;a&&title;.lazy&&data-original;.public-list-prb&&Text;a&&href',
     一级: $js.toString(() => {
